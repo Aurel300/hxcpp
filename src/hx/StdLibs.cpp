@@ -6,6 +6,7 @@
 #ifdef HX_WINDOWS
 #include <windows.h>
 #include <io.h>
+#include <fcntl.h>
 #elif defined(__unix__) || defined(__APPLE__)
 #include <sys/time.h>
 #ifndef EMSCRIPTEN
@@ -261,9 +262,12 @@ void __hxcpp_stdlibs_boot()
          }
       }
    }
-   //_setmode(_fileno(stdout), 0x00040000); // _O_U8TEXT
-   //_setmode(_fileno(stderr), 0x00040000); // _O_U8TEXT
-   //_setmode(_fileno(stdin), 0x00040000); // _O_U8TEXT
+   #endif
+
+   #if HX_WINDOWS
+   // turn off automatic CRLF conversion
+   _setmode(_fileno(stdout), _O_BINARY);
+   _setmode(_fileno(stderr), _O_BINARY);
    #endif
 
    // This is necessary for UTF-8 output to work correctly.
